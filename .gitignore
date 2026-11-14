@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.env
+.venv
+venv/
+node_modules/
+.next/
+storage/videos/*
+storage/audio/*
+storage/frames/*
+!storage/.gitkeep
+pgdata/
+dist/
+*.log
