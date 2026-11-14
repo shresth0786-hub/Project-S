@@ -12,3 +12,7 @@ storage/frames/*
 pgdata/
 dist/
 *.log
+
+*.db
+test*.db
+
