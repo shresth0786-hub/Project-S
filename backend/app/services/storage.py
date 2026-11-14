@@ -27,29 +27,33 @@ def save_upload_file(upload_file: UploadFile, video_id: str) -> tuple[str, int]:
             f.write(chunk)
     return str(dest), size
 
+def _norm_id(video_id) -> str:
+    return str(video_id)
+
 def get_video_path(video_id: str, ext: str = ".mp4") -> Path:
-    # try to find file with any ext
-    for p in VIDEOS_DIR.glob(f"{video_id}.*"):
+    vid = _norm_id(video_id)
+    for p in VIDEOS_DIR.glob(f"{vid}.*"):
         return p
-    return VIDEOS_DIR / f"{video_id}{ext}"
+    return VIDEOS_DIR / f"{vid}{ext}"
 
 def delete_video_files(video_id: str):
-    for p in VIDEOS_DIR.glob(f"{video_id}.*"):
+    vid = _norm_id(video_id)
+    for p in VIDEOS_DIR.glob(f"{vid}.*"):
         try:
             p.unlink()
         except: pass
-    for p in AUDIO_DIR.glob(f"{video_id}.*"):
+    for p in AUDIO_DIR.glob(f"{vid}.*"):
         try:
             p.unlink()
         except: pass
-    frame_dir = FRAMES_DIR / video_id
+    frame_dir = FRAMES_DIR / vid
     if frame_dir.exists():
         shutil.rmtree(frame_dir, ignore_errors=True)
 
 def get_audio_path(video_id: str) -> Path:
-    return AUDIO_DIR / f"{video_id}.wav"
+    return AUDIO_DIR / f"{_norm_id(video_id)}.wav"
 
 def get_frames_dir(video_id: str) -> Path:
-    d = FRAMES_DIR / video_id
+    d = FRAMES_DIR / _norm_id(video_id)
     d.mkdir(parents=True, exist_ok=True)
     return d

@@ -51,7 +51,7 @@ def process_video_sync(video_id: str):
         db.commit()
 
         # Step 1: audio
-        audio_path = str(get_audio_path(video_id))
+        audio_path = str(get_audio_path(str(video_id)))
         ok_audio = extract_audio(video.file_path, audio_path)
         if not ok_audio:
             logger.warning("audio_extraction_failed_or_skipped", video_id=video_id)
@@ -67,7 +67,7 @@ def process_video_sync(video_id: str):
 
         # Step 3: frames
         update_job(db, job, step="extracting_frames", progress=50)
-        frames_dir = str(get_frames_dir(video_id))
+        frames_dir = str(get_frames_dir(str(video_id)))
         from app.core.config import settings
         frames = extract_frames(video.file_path, frames_dir, sample_fps=settings.FRAME_SAMPLE_FPS, scene_threshold=settings.SCENE_THRESHOLD)
         

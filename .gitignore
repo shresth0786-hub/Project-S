@@ -16,3 +16,10 @@ dist/
 *.db
 test*.db
 
+
+# local test artifacts
+backend/storage/
+backend/yolov8n.pt
+temp/
+backend/test_real2.db
+

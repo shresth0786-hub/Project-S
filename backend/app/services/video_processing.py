@@ -34,11 +34,27 @@ def get_video_metadata(video_path: str) -> Dict:
     cap.release()
     return {"duration": duration, "width": w, "height": h, "fps": fps}
 
+def _ffmpeg_bin():
+    for cand in [os.getenv("FFMPEG_BINARY"), "ffmpeg", r"C:\Users\SHRESTH\AppData\Local\Microsoft\WindowsApps\ffmpeg.exe", r"F:\Project S\cache\ffmpeg\ffmpeg.exe"]:
+        if cand and Path(cand).exists() or cand=="ffmpeg":
+            # test
+            try:
+                subprocess.run([cand,"-version"], capture_output=True, timeout=3)
+                return cand
+            except: continue
+    try:
+        import imageio_ffmpeg
+        return imageio_ffmpeg.get_ffmpeg_exe()
+    except: return "ffmpeg"
+
 def extract_audio(video_path: str, audio_path: str) -> bool:
     # FFmpeg extraction to wav 16k mono
     try:
-        cmd = ["ffmpeg", "-y", "-i", video_path, "-vn", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", audio_path]
+        bin = _ffmpeg_bin()
+        cmd = [bin, "-y", "-i", video_path, "-vn", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", audio_path]
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+        if result.returncode!=0:
+            print(f"ffmpeg stderr {result.stderr[:500]}")
         return result.returncode == 0 and Path(audio_path).exists()
     except Exception as e:
         print(f"extract_audio error: {e}")
